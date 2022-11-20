@@ -6,16 +6,12 @@
       <%= link_to 'Add a Movie', new_list_bookmark_path(@list), class: 'btn btn-primary btn-lg' %>
         <br>
         <% @list.bookmarks.each do |bookmark| %>
-          <strong><%= bookmark.movie.title %></strong>
-          <br><%= bookmark.comment %>
-          <br>
-
+          <p><strong><%= bookmark.movie.title %></strong><p>
+          <%= bookmark.comment %>
+          <%= link_to bookmark_path(bookmark),  data: { turbo_method: :delete, turbo_confirm: "Delete bookmark?"}, class: 'card-delete' do  %>
+          <i class="fas fa-trash"></i>
+          <% end %>
         <% end %>
-      <%= link_to "Delete",
-        movie_path(@movie),
-        data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}
-      %>
-
     </div>
   </div>
 </div>

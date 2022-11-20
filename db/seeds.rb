@@ -5,22 +5,51 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
-require 'faker'
+# require 'faker'
 
-puts "Cleaning database"
+# puts "Cleaning database"
+# Movie.destroy_all
+
+# puts "Creating movies"
+
+# 20.times do
+#   movie = Movie.create(
+#     title: Faker::Movie.title,
+#     overview: Faker::Quote.famous_last_words,
+#     poster_url: Faker::Internet.url,
+#     rating: rand(1..10)
+#   )
+
+#   puts "Movie with id: #{movie.id} has been created"
+# end
+
+# puts "Finished"
+
+require 'open-uri'
+require 'json'
+
+puts "Cleaning up database..."
+Bookmark.destroy_all
 Movie.destroy_all
+puts "Database cleaned"
 
-puts "Creating movies"
+ url = "http://tmdb.lewagon.com/movie/top_rated"
+# 10.times do |i|
+#   puts "Importing movies from page #{i + 1}"
+  movies = JSON.parse(URI.open(url).read)
+  movies['results'].each do |movie|
+    puts "Creating #{movie['title']}"
+    base_poster_url = "https://image.tmdb.org/t/p/original"
+    Movie.create(
+      title: movie['title'],
+      overview: movie['overview'],
+      poster_url: "#{base_poster_url}#{movie['poster_path']}",
+      rating: movie['vote_average']
+    )
+  end
+# end
+puts "Movies created"
 
-20.times do
-  movie = Movie.create(
-    title: Faker::Movie.title,
-    overview: Faker::Quote.famous_last_words,
-    poster_url: Faker::Internet.url,
-    rating: rand(1..10)
-  )
 
-  puts "Movie with id: #{movie.id} has been created"
-end
 
-puts "Finished"
+# {"page":1,"results":[{"adult":false,"backdrop_path":"/rl7Jw8PjhSIjArOlDNv0JQPL1ZV.jpg","genre_ids":[10749,18],"id":851644,"original_language":"ko","original_title":"20 Century Girl","overview":"Yeon-du asks her best friend Bora to collect all the information she can about Baek Hyun-jin while she is away in the U.S. for heart surgery. Bora decides to get close to Baek's best friend, Pung Woon-ho first. However, Bora's clumsy plan unfolds in an unexpected direction. In 1999, a year before the new century, Bora, who turns seventeen, falls into the fever of first love.","popularity":348.878,"poster_path":"/od22ftNnyag0TTxcnJhlsu3aLoU.jpg","release_date":"2022-10-06","title":"20th Century Girl","video":false,"vote_average":8.8,"vote_count":242}
